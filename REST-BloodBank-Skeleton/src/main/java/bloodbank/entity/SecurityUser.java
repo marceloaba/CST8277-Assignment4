@@ -77,7 +77,6 @@ public class SecurityUser implements Serializable, Principal {
     @OneToOne(fetch = FetchType.LAZY)
     //Specify the join column name and the referenced column name
     @JoinColumn(name = "person_id", referencedColumnName = "id")
-//    @JoinTable(name = "security_user", joinColumns = @JoinColumn(name = "person_id", referencedColumnName = "id"))
     protected Person person;
     
     @ManyToMany( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
