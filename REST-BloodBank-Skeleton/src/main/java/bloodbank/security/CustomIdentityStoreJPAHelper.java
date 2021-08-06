@@ -24,6 +24,7 @@ import javax.ejb.Singleton;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
 
@@ -38,11 +39,24 @@ public class CustomIdentityStoreJPAHelper {
 	public SecurityUser findUserByName(String username) {
 		LOG.debug("find a User By the Name={}", username);
 		SecurityUser user = null;
-		//TODO:  Call the entity manager's createNamedQuery() method to call SecurityUser's named query called "SecurityUser.userByName"
-		//       The named query "SecurityUser.userByName" accepts a parameter called "param1" so be sure to set it with the value of parameter "username"
-		//       Call the typed query's getSingleResult() inside a try-catch statement
-		//       The exception to catch is NoResultException
-		//       Be sure to assign the SecurityUser object returned by getSingleResult() to variable "user" inside the try block and return it 
+		//TO DO:  Call the entity manager's createNamedQuery() method to call SecurityUser's named query called "SecurityUser.userByName"
+		
+		//The named query "SecurityUser.userByName" accepts a parameter called "param1" so be sure to set it with the value of parameter "username"
+		Query query = em.createNamedQuery(SecurityUser.SECURITY_USER_BY_NAME_QUERY);
+		query.setParameter("param1", username);
+		//Call the typed query's getSingleResult() inside a try-catch statement
+		try {
+			user = new SecurityUser();
+//			user.setUsername(query.getSingleResult().toString());
+//			user = (SecurityUser) query.getSingleResult();
+			user.setUsername(query.getSingleResult().toString());
+		}
+		// The exception to catch is NoResultException
+		catch(NoResultException ex) {
+			ex.getStackTrace();
+		}
+
+		//Be sure to assign the SecurityUser object returned by getSingleResult() to variable "user" inside the try block and return it 
 		return user;
 	}
 

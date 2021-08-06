@@ -34,7 +34,8 @@ import bloodbank.rest.serializer.BloodBankSerializer;
 @Entity
 @Table( name = "blood_bank")
 @NamedQuery( name = BloodBank.ALL_BLOODBANKS_QUERY_NAME, query = "SELECT distinct b FROM BloodBank b left JOIN FETCH b.donations")
-@NamedQuery( name = BloodBank.IS_DUPLICATE_QUERY_NAME, query = "SELECT count(b) FROM BloodBank b where b.name=:param1")
+//left join fetch Added by Marcelo
+@NamedQuery( name = BloodBank.IS_DUPLICATE_QUERY_NAME, query = "SELECT count(b) FROM BloodBank b left JOIN FETCH b.donations where b.name=:param1")
 @NamedQuery( name = BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME, query = "SELECT distinct b FROM BloodBank b left JOIN FETCH b.donations where b.id=:param1")
 @Inheritance( strategy = InheritanceType.SINGLE_TABLE)
 @AttributeOverride( name = "id", column = @Column( name = "bank_id"))
@@ -71,6 +72,7 @@ public abstract class BloodBank extends PojoBase implements Serializable {
 		return isPublic;
 	}
 
+	// Annotation Added by Marcelo
 	@JsonIgnore
 	public Set< BloodDonation> getDonations() {
 		return donations;

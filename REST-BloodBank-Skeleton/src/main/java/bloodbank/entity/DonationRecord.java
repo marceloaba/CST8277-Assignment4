@@ -16,14 +16,16 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the donation_record database table.
  * 
  */
 @Entity
 @Table( name = "donation_record")
-@NamedQuery( name = DonationRecord.ALL_RECORDS_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation left join fetch d.donation")
-@NamedQuery( name = DonationRecord.ID_RECORD_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation where d.id=:param1")
+@NamedQuery( name = DonationRecord.ALL_RECORDS_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation left join fetch d.owner")//d.donation to d.owner Changed by Marcelo
+@NamedQuery( name = DonationRecord.ID_RECORD_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation left join fetch d.owner where d.id=:param1")
 @AttributeOverride( name = "id", column = @Column( name = "record_id"))
 public class DonationRecord extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -44,7 +46,9 @@ public class DonationRecord extends PojoBase implements Serializable {
 	public DonationRecord() {
 
 	}
-
+	
+	// Annotation Added by Marcelo
+	@JsonIgnore
 	public BloodDonation getDonation() {
 		return donation;
 	}
@@ -52,7 +56,8 @@ public class DonationRecord extends PojoBase implements Serializable {
 	public void setDonation( BloodDonation donation) {
 		this.donation = donation;
 	}
-
+	// Annotation Added by Marcelo
+	@JsonIgnore
 	public Person getOwner() {
 		return owner;
 	}

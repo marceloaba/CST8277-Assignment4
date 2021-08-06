@@ -23,8 +23,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table( name = "person")
-@NamedQuery( name = Person.ALL_PERSONS_QUERY_NAME, query = "SELECT p FROM Person p")
-@NamedQuery( name = Person.QUERY_PERSON_BY_ID, query = "SELECT p FROM Person p where p.id=:param1")
+@NamedQuery( name = Person.ALL_PERSONS_QUERY_NAME, query = "SELECT p FROM Person p left join fetch p.donations left join fetch p.contacts") //left join fetch Added by Marcelo
+@NamedQuery( name = Person.QUERY_PERSON_BY_ID, query = "SELECT p FROM Person p left join fetch p.donations left join fetch p.contacts where p.id=:param1") //left join fetch Added by Marcelo
 //@AttributeOverride( name = "id", column = @Column( name = "id"))
 //no need for AttributeOverride as person is column is called id as well.
 public class Person extends PojoBase implements Serializable {
@@ -65,6 +65,7 @@ public class Person extends PojoBase implements Serializable {
 		this.lastName = lastName;
 	}
 
+	// Annotation Added by Marcelo
 	@JsonIgnore
 	public Set< DonationRecord> getDonations() {
 		return donations;
@@ -74,6 +75,7 @@ public class Person extends PojoBase implements Serializable {
 		this.donations = donations;
 	}
 
+	// Annotation Added by Marcelo
 	@JsonIgnore
 	public Set< Contact> getContacts() {
 		return contacts;

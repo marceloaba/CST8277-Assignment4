@@ -17,12 +17,14 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the phone database table.
  */
 @Entity
 @Table( name = "phone")
-@NamedQuery( name = "Phone.findAll", query = "SELECT p FROM Phone p")
+@NamedQuery( name = "Phone.findAll", query = "SELECT p FROM Phone p left join fetch p.contacts") //left join fetch Added by Marcelo
 @AttributeOverride( name = "id", column = @Column( name = "phone_id"))
 public class Phone extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -74,7 +76,8 @@ public class Phone extends PojoBase implements Serializable {
 	public void setNumber( String number) {
 		this.number = number;
 	}
-
+	// Annotation Added by Marcelo
+	@JsonIgnore
 	public Set< Contact> getContacts() {
 		return contacts;
 	}

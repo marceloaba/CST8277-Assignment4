@@ -18,6 +18,8 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the blood_donation database table.
  */
@@ -25,7 +27,7 @@ import org.hibernate.Hibernate;
 @Table( name = "blood_donation")
 @NamedQuery( name = BloodDonation.FIND_ALL, query = "SELECT b FROM BloodDonation b left join fetch b.bank left join fetch b.record")
 @NamedQuery( name = BloodDonation.FIND_BY_ID, 
-query = "SELECT b FROM BloodDonation b left join fetch b.bank left join fetch b.record where b.id=:param1")
+query = "SELECT b FROM BloodDonation b left join fetch b.bank left join fetch b.record where b.id=:param1") //left join fetch Added by Marcelo
 @AttributeOverride( name = "id", column = @Column( name = "donation_id"))
 public class BloodDonation extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
@@ -39,7 +41,6 @@ public class BloodDonation extends PojoBase implements Serializable {
 	private BloodBank bank;
 
 	@OneToOne( fetch = FetchType.LAZY, cascade = { CascadeType.MERGE, CascadeType.REFRESH}, optional = true, mappedBy = "donation")
-//	@JoinColumn( name = "donation_id", referencedColumnName = "donation_id", nullable = true, insertable = false, updatable = false)
 	private DonationRecord record;
 
 	@Basic( optional = false)
@@ -48,7 +49,9 @@ public class BloodDonation extends PojoBase implements Serializable {
 
 	@Embedded
 	private BloodType bloodType;
-
+	
+	// Annotation Added by Marcelo
+	@JsonIgnore
 	public BloodBank getBank() {
 		return bank;
 	}
@@ -56,7 +59,8 @@ public class BloodDonation extends PojoBase implements Serializable {
 	public void setBank( BloodBank bank) {
 		this.bank = bank;
 	}
-
+	// Annotation Added by Marcelo
+	@JsonIgnore
 	public DonationRecord getRecord() {
 		return record;
 	}
