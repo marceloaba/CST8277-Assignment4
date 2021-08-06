@@ -12,6 +12,8 @@
 package bloodbank.ejb;
 
 import static bloodbank.entity.BloodBank.ALL_BLOODBANKS_QUERY_NAME;
+import static bloodbank.entity.BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME;
+import static bloodbank.entity.BloodBank.IS_DUPLICATE_QUERY_NAME;
 import static bloodbank.entity.Person.ALL_PERSONS_QUERY_NAME;
 import static bloodbank.entity.SecurityRole.ROLE_BY_NAME_QUERY;
 import static bloodbank.entity.SecurityUser.USER_FOR_OWNING_PERSON_QUERY;
@@ -32,8 +34,10 @@ import static bloodbank.utility.MyConstants.USER_ROLE;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ejb.Singleton;
 import javax.inject.Inject;
@@ -53,6 +57,8 @@ import org.hibernate.Hibernate;
 import bloodbank.entity.Address;
 import bloodbank.entity.BloodBank;
 import bloodbank.entity.BloodDonation;
+import bloodbank.entity.Contact;
+import bloodbank.entity.DonationRecord;
 import bloodbank.entity.Person;
 import bloodbank.entity.SecurityRole;
 import bloodbank.entity.SecurityUser;
@@ -115,8 +121,33 @@ public class BloodBankService implements Serializable {
     }
 
     @Transactional
-    public Person setAddressFor(int id, Address newAddress) {
-    	return null;
+    public Address setAddressForPersonPhone(int personId, int phoneId, Address newAddress) {
+    	Person personToBeUpdated = em.find(Person.class, personId);
+    	if (personToBeUpdated != null) { // Person exists
+    		Set<Contact> contacts = personToBeUpdated.getContacts();
+    		contacts.forEach(c -> {
+    			if (c.getPhone().getId() == phoneId) {
+    				if (c.getAddress() != null) { // Address exists
+    					Address addr = em.find(Address.class, c.getAddress().getId());
+    					addr.setAddress(newAddress.getStreetNumber(),
+    							        newAddress.getStreet(),
+    							        newAddress.getCity(),
+    							        newAddress.getProvince(),
+    							        newAddress.getCountry(),
+    							        newAddress.getZipcode());
+    					em.merge(addr);
+    					
+    				}
+    				else { // Address does not exist
+    					c.setAddress(newAddress);
+    					em.merge(personToBeUpdated);
+    				}
+    			}
+    		});
+    		return newAddress;
+    	}
+    	else // Person doesn't exist
+    		return null;
     }
 
     /**
@@ -155,4 +186,122 @@ public class BloodBankService implements Serializable {
             em.remove(person);
         }
     }
+    
+    public List<BloodBank> getAllBloodBanks() {
+    	CriteriaBuilder cb = em.getCriteriaBuilder();
+    	CriteriaQuery<BloodBank> cq = cb.createQuery(BloodBank.class);
+    	cq.select(cq.from(BloodBank.class));
+    	return em.createQuery(cq).getResultList();
+    }
+    
+    /*
+    public BloodBank getBloodBankById(int bloodBankId) {
+    	return em.find(BloodBank.class, bloodBankId);
+    }
+    */
+    
+    public BloodBank getBloodBankById(int bloodBankId) {
+    	TypedQuery<BloodBank> specificBloodBankQuery = em.createNamedQuery(SPECIFIC_BLOODBANKS_QUERY_NAME, BloodBank.class);
+    	specificBloodBankQuery.setParameter(PARAM1, bloodBankId);
+        return specificBloodBankQuery.getSingleResult();
+    }
+    
+    // These 2 methods are more generic.
+    // BEGIN
+    public <T> List<T> getAll(Class<T> entity, String namedQuery) {
+    	TypedQuery<T> allQuery = em.createNamedQuery(namedQuery, entity);
+    	return allQuery.getResultList();
+    }
+    
+    public <T> T getById(Class<T> entity, String namedQuery, int id) {
+    	TypedQuery<T> allQuery = em.createNamedQuery(namedQuery, entity);
+    	allQuery.setParameter(PARAM1, id);
+    	return allQuery.getSingleResult();
+    }
+    // END
+
+    /*
+    @Transactional
+    // This is not working due to foreign key constraint thus replacing this with the version below.
+    public BloodBank deleteBloodBank(int id) {
+    	BloodBank bb = getBloodBankById(id);
+    	em.remove(bb);
+    	return bb;
+    }
+    */
+
+    @Transactional
+    public BloodBank deleteBloodBank(int id) {
+    	BloodBank bb = getBloodBankById(id);
+    	// BloodBank bb = getById(BloodBank.class, BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME, id);
+    	
+    	Set<BloodDonation> donations = bb.getDonations();
+    	
+    	// You can either delete using a new named query and delete all blood donations with the specified blood bank id (id)
+    	// Or you can loop through the list and manually remove them as I am doing below
+    	
+    	List<BloodDonation> list = new LinkedList<>();
+    	donations.forEach(list::add);
+    	
+    	list.forEach(bd -> {
+    		if (bd.getRecord() != null) {
+    			DonationRecord dr = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, bd.getRecord().getId());
+    			dr.setDonation(null);
+    		}
+    		bd.setRecord(null);
+    		em.merge(bd);
+    	});
+    	
+    	em.remove(bb);
+    	return bb;
+
+    }
+    
+    // Please try to understand and test the below:
+    public boolean isDuplicated(BloodBank newBloodBank) {
+        TypedQuery<Long> allBloodBankQuery = em.createNamedQuery(IS_DUPLICATE_QUERY_NAME, Long.class);
+        allBloodBankQuery.setParameter(PARAM1, newBloodBank.getName());
+        return (allBloodBankQuery.getSingleResult() >= 1);
+    }
+
+    @Transactional
+    public BloodBank persistBloodBank(BloodBank newBloodBank) {
+        em.persist(newBloodBank);
+        return newBloodBank;
+    }
+
+    @Transactional
+    public BloodBank updateBloodBank(int id, BloodBank updatingBloodBank) {
+        BloodBank bloodBankToBeUpdated = getBloodBankById(id);
+        if (bloodBankToBeUpdated != null) {
+            em.refresh(bloodBankToBeUpdated);
+            em.merge(updatingBloodBank);
+            em.flush();
+        }
+        return bloodBankToBeUpdated;
+    }
+    
+    @Transactional
+    public BloodDonation persistBloodDonation(BloodDonation newBloodDonation) {
+        em.persist(newBloodDonation);
+        return newBloodDonation;
+    }
+
+    public BloodDonation getBloodDonationById(int prodId) {
+        TypedQuery<BloodDonation> allBloodDonationQuery = em.createNamedQuery(BloodDonation.FIND_BY_ID, BloodDonation.class);
+        allBloodDonationQuery.setParameter(PARAM1, prodId);
+        return allBloodDonationQuery.getSingleResult();
+    }
+
+    @Transactional
+    public BloodDonation updateBloodDonation(int id, BloodDonation bloodDonationWithUpdates) {
+        BloodDonation bloodDonationToBeUpdated = getBloodDonationById(id);
+        if (bloodDonationToBeUpdated != null) {
+            em.refresh(bloodDonationToBeUpdated);
+            em.merge(bloodDonationWithUpdates);
+            em.flush();
+        }
+        return bloodDonationToBeUpdated;
+    }
+    
 }
