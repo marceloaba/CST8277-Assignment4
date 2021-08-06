@@ -11,7 +11,7 @@
 package bloodbank.rest.resource;
 
 import static bloodbank.utility.MyConstants.ADMIN_ROLE;
-import static bloodbank.utility.MyConstants.CUSTOMER_ADDRESS_RESOURCE_PATH;
+import static bloodbank.utility.MyConstants.PERSON_PHONE_ADDRESS_RESOURCE_PATH;
 import static bloodbank.utility.MyConstants.PERSON_RESOURCE_NAME;
 import static bloodbank.utility.MyConstants.RESOURCE_PATH_ID_ELEMENT;
 import static bloodbank.utility.MyConstants.RESOURCE_PATH_ID_PATH;
@@ -105,11 +105,12 @@ public class PersonResource {
 
 	@PUT
 	@RolesAllowed({ADMIN_ROLE})
-	@Path(CUSTOMER_ADDRESS_RESOURCE_PATH)
-	public Response addAddressForPerson(@PathParam(RESOURCE_PATH_ID_ELEMENT) int id, Address newAddress) {
+	@Path(PERSON_PHONE_ADDRESS_RESOURCE_PATH)
+	public Response updateAddressForPersonContact(@PathParam("personID") int personId, @PathParam("phoneID") int phoneId, Address newAddress) {
 		Response response = null;
-		Person updatedPerson = service.setAddressFor(id, newAddress);
-		response = Response.ok(updatedPerson).build();
+		Address address = service.setAddressForPersonPhone(personId, phoneId, newAddress);
+		response = Response.ok(address).build();
 		return response;
 	}
+
 }
