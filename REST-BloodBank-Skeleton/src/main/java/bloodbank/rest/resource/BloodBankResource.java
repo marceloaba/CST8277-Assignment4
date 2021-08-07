@@ -1,6 +1,5 @@
 package bloodbank.rest.resource;
 
-import static bloodbank.utility.MyConstants.PERSON_RESOURCE_NAME;
 import static bloodbank.utility.MyConstants.ADMIN_ROLE;
 import static bloodbank.utility.MyConstants.USER_ROLE;
 

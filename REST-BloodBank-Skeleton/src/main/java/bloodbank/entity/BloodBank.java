@@ -62,6 +62,10 @@ public abstract class BloodBank extends PojoBase implements Serializable {
 
 	@Transient
 	private boolean isPublic;
+	
+	public BloodBank() {
+		
+	}
 
 	protected BloodBank( boolean isPublic) {
 		this.isPublic = isPublic;
