@@ -11,10 +11,8 @@
  */
 package bloodbank.ejb;
 
-import static bloodbank.entity.BloodBank.ALL_BLOODBANKS_QUERY_NAME;
 import static bloodbank.entity.BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME;
 import static bloodbank.entity.BloodBank.IS_DUPLICATE_QUERY_NAME;
-import static bloodbank.entity.Person.ALL_PERSONS_QUERY_NAME;
 import static bloodbank.entity.SecurityRole.ROLE_BY_NAME_QUERY;
 import static bloodbank.entity.SecurityUser.USER_FOR_OWNING_PERSON_QUERY;
 import static bloodbank.utility.MyConstants.DEFAULT_KEY_SIZE;
@@ -32,7 +30,6 @@ import static bloodbank.utility.MyConstants.PU_NAME;
 import static bloodbank.utility.MyConstants.USER_ROLE;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,13 +43,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import javax.security.enterprise.identitystore.Pbkdf2PasswordHash;
 import javax.transaction.Transactional;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.Hibernate;
 
 import bloodbank.entity.Address;
 import bloodbank.entity.BloodBank;
@@ -71,7 +63,7 @@ import bloodbank.entity.SecurityUser;
 public class BloodBankService implements Serializable {
     private static final long serialVersionUID = 1L;
     
-    private static final Logger LOG = LogManager.getLogger();
+//    private static final Logger LOG = LogManager.getLogger();
     
     @PersistenceContext(name = PU_NAME)
     protected EntityManager em;
@@ -84,19 +76,16 @@ public class BloodBankService implements Serializable {
     	CriteriaQuery<Person> cq = cb.createQuery(Person.class);
     	cq.select(cq.from(Person.class));
     	return em.createQuery(cq).getResultList();
-    	//return null;
     }
 
     public Person getPersonId(int id) {
     	return em.find(Person.class, id);
-    	//return null;
     }
 
     @Transactional
     public Person persistPerson(Person newPerson) {
     	em.persist(newPerson);
     	return newPerson;
-    	// return null;
     }
 
     @Transactional
@@ -194,12 +183,7 @@ public class BloodBankService implements Serializable {
     	return em.createQuery(cq).getResultList();
     }
     
-    /*
-    public BloodBank getBloodBankById(int bloodBankId) {
-    	return em.find(BloodBank.class, bloodBankId);
-    }
-    */
-    
+   
     public BloodBank getBloodBankById(int bloodBankId) {
     	TypedQuery<BloodBank> specificBloodBankQuery = em.createNamedQuery(SPECIFIC_BLOODBANKS_QUERY_NAME, BloodBank.class);
     	specificBloodBankQuery.setParameter(PARAM1, bloodBankId);
@@ -218,18 +202,7 @@ public class BloodBankService implements Serializable {
     	allQuery.setParameter(PARAM1, id);
     	return allQuery.getSingleResult();
     }
-    // END
-
-    /*
-    @Transactional
-    // This is not working due to foreign key constraint thus replacing this with the version below.
-    public BloodBank deleteBloodBank(int id) {
-    	BloodBank bb = getBloodBankById(id);
-    	em.remove(bb);
-    	return bb;
-    }
-    */
-
+    
     @Transactional
     public BloodBank deleteBloodBank(int id) {
     	BloodBank bb = getBloodBankById(id);
@@ -302,6 +275,28 @@ public class BloodBankService implements Serializable {
             em.flush();
         }
         return bloodDonationToBeUpdated;
+    }
+    
+    // ADDRESSES Services
+    @Transactional
+    public Address persistAddress(Address newAddress) {
+        em.persist(newAddress);
+        return newAddress;
+    }
+    
+    @Transactional
+    public void deleteAddressById(int addressID) {
+    	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
+        if (address != null) {
+            em.refresh(address);
+            TypedQuery<Contact> findContact = em
+                .createNamedQuery(Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, Contact.class)
+                .setParameter(PARAM1, address.getId());
+            Contact contact = findContact.getSingleResult();
+            contact.setAddress(null);
+            em.merge(contact);
+            em.remove(address);
+        }
     }
     
 }

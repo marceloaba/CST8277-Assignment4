@@ -17,14 +17,19 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the contact database table.
  */
 @Entity
 @Table( name = "contact")
 @NamedQuery( name = "Contact.findAll", query = "SELECT c FROM Contact c")
+@NamedQuery(name = Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, query = "SELECT c FROM Contact c left JOIN FETCH c.owner left JOIN FETCH c.phone left JOIN FETCH c.address WHERE c.address.id = :param1")
 public class Contact extends PojoBaseCompositeKey< ContactPK> implements Serializable {
 	private static final long serialVersionUID = 1L;
+	
+    public static final String ADDRESS_FOR_OWNING_PERSON_CONTACT = "Contact.addressForOwningContact";
 
 	@EmbeddedId
 	private ContactPK id;
@@ -63,7 +68,8 @@ public class Contact extends PojoBaseCompositeKey< ContactPK> implements Seriali
 	public void setId( ContactPK id) {
 		this.id = id;
 	}
-
+	
+	@JsonIgnore
 	public Person getOwner() {
 		return owner;
 	}
@@ -72,7 +78,8 @@ public class Contact extends PojoBaseCompositeKey< ContactPK> implements Seriali
 		id.setPersonId( owner.id);
 		this.owner = owner;
 	}
-
+	
+	@JsonIgnore
 	public Phone getPhone() {
 		return phone;
 	}
@@ -81,7 +88,8 @@ public class Contact extends PojoBaseCompositeKey< ContactPK> implements Seriali
 		id.setPhoneId( phone.id);
 		this.phone = phone;
 	}
-
+	
+	@JsonIgnore
 	public Address getAddress() {
 		return address;
 	}
