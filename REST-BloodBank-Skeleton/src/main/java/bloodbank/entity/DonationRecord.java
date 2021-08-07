@@ -22,7 +22,7 @@ import org.hibernate.Hibernate;
  */
 @Entity
 @Table( name = "donation_record")
-@NamedQuery( name = DonationRecord.ALL_RECORDS_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation left join fetch d.donation")
+@NamedQuery( name = DonationRecord.ALL_RECORDS_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation left join fetch d.owner")
 @NamedQuery( name = DonationRecord.ID_RECORD_QUERY_NAME, query = "SELECT d FROM DonationRecord d left join fetch d.donation where d.id=:param1")
 @AttributeOverride( name = "id", column = @Column( name = "record_id"))
 public class DonationRecord extends PojoBase implements Serializable {

@@ -43,6 +43,14 @@ public class CustomIdentityStoreJPAHelper {
 		//       Call the typed query's getSingleResult() inside a try-catch statement
 		//       The exception to catch is NoResultException
 		//       Be sure to assign the SecurityUser object returned by getSingleResult() to variable "user" inside the try block and return it 
+		TypedQuery<SecurityUser> tq = em.createNamedQuery(SECURITY_USER_BY_NAME_QUERY, SecurityUser.class);		
+		tq.setParameter(PARAM1, username);
+		try {
+			user = tq.getSingleResult();
+		} catch (NoResultException e){
+			LOG.debug(e);
+			user=null;
+		}
 		return user;
 	}
 

@@ -75,6 +75,8 @@ public class SecurityUser implements Serializable, Principal {
     //TODO:  Specify a one-to-one relationship and no cascade types
     //       Also specify the fetch type to be lazy
     //       Specify the join column name and the referenced column name
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name ="person_id", referencedColumnName="id")
     protected Person person;
     
     @ManyToMany( cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
