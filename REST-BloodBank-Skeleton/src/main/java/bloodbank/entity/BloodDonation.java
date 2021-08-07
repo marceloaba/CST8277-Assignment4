@@ -18,6 +18,8 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the blood_donation database table.
  */
@@ -49,6 +51,7 @@ public class BloodDonation extends PojoBase implements Serializable {
 	@Embedded
 	private BloodType bloodType;
 
+	@JsonIgnore
 	public BloodBank getBank() {
 		return bank;
 	}
@@ -57,6 +60,7 @@ public class BloodDonation extends PojoBase implements Serializable {
 		this.bank = bank;
 	}
 
+	@JsonIgnore
 	public DonationRecord getRecord() {
 		return record;
 	}

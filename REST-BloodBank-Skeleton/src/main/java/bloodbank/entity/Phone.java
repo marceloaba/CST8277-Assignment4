@@ -17,6 +17,8 @@ import javax.persistence.Table;
 
 import org.hibernate.Hibernate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * The persistent class for the phone database table.
  */
@@ -74,7 +76,8 @@ public class Phone extends PojoBase implements Serializable {
 	public void setNumber( String number) {
 		this.number = number;
 	}
-
+	
+	@JsonIgnore
 	public Set< Contact> getContacts() {
 		return contacts;
 	}
