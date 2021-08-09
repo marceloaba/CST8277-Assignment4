@@ -307,9 +307,9 @@ public class BloodBankService implements Serializable {
     
     @Transactional
     public void deleteDonationRecordById(int donationId) {
-    	DonationRecord donation = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, donationId);
-        if (donation != null) {
-            em.remove(donation);
+    	DonationRecord record = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, donationId);
+        if (record != null) {
+            em.remove(record);
         }
     }
     
