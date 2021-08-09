@@ -61,8 +61,10 @@ public class BloodDonationResource {
 
 	@POST
 	@RolesAllowed({ADMIN_ROLE})
-	public Response addBloodDonation(BloodDonation newDonation) {
+	@Path("bank/{bankID}")
+	public Response addBloodDonation(BloodDonation newDonation, @PathParam("bankID") int id) {
 		LOG.debug("Adding a new doantion = {}", newDonation);
+		newDonation.setBank(service.getBloodBankById(id));
 		BloodDonation donation = service.persistBloodDonation(newDonation);
 		return Response.ok( donation).build();
 	}

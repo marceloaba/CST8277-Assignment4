@@ -70,9 +70,13 @@ public class DonationRecordResource {
 
 	@POST
 	@RolesAllowed({ADMIN_ROLE})
-	public Response addDonationRecord(DonationRecord newRecord) {
+	@Path("/person/{personID}/blooddonation/{donationID}")
+	public Response addDonationRecord(DonationRecord newRecord, @PathParam("personID") int personID, @PathParam("donationID") int donationID) {
 		LOG.debug("Adding a new doantionRecord = {}", newRecord);
-		DonationRecord record = service.persistDonationRecord(newRecord);
+		
+		
+		
+		DonationRecord record = service.persistDonationRecord(newRecord,personID,donationID);
 		return Response.ok( record).build();
 	}
 

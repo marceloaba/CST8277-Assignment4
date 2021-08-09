@@ -31,6 +31,7 @@ import static bloodbank.utility.MyConstants.USER_ROLE;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -285,7 +286,22 @@ public class BloodBankService implements Serializable {
     }
     
     @Transactional
-    public DonationRecord persistDonationRecord(DonationRecord newRecord) {
+    public DonationRecord persistDonationRecord(DonationRecord newRecord, int personID, int donationID) {
+    	
+    	
+		Person person = getPersonId(personID);
+		BloodDonation donation = getBloodDonationById(donationID);
+    	
+    	newRecord.setOwner(person);
+		newRecord.setDonation(donation);
+		//donation.setRecord(newRecord);
+		//em.merge(person);
+		//Set<DonationRecord> records = new HashSet<>();
+		//records.add(newRecord);
+		//person.setDonations( records);
+		//em.merge(person);
+		//em.merge(donation);
+    	
         em.persist(newRecord);
         return newRecord;
     }
@@ -318,7 +334,6 @@ public class BloodBankService implements Serializable {
     	
     	BloodDonation donation = getById(BloodDonation.class, BloodDonation.FIND_BY_ID, donationID);
         if (donation != null) {
-            em.refresh(donation);
             
             TypedQuery<DonationRecord> findDonationRecord = em
                 .createNamedQuery(DonationRecord.ID_RECORD_QUERY_NAME, DonationRecord.class)
@@ -327,7 +342,6 @@ public class BloodBankService implements Serializable {
             	DonationRecord donationRecord = findDonationRecord.getSingleResult();
                 donationRecord.setDonation(null);
                 em.merge(donationRecord);
-                
             em.remove(donation);
         }
     }
