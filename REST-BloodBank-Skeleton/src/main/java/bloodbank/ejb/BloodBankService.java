@@ -285,6 +285,12 @@ public class BloodBankService implements Serializable {
     }
     
     @Transactional
+    public DonationRecord persistDonationRecord(DonationRecord newRecord) {
+        em.persist(newRecord);
+        return newRecord;
+    }
+    
+    @Transactional
     public void deleteAddressById(int addressID) {
     	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
         if (address != null) {
@@ -299,4 +305,30 @@ public class BloodBankService implements Serializable {
         }
     }
     
+    @Transactional
+    public void deleteDonationRecordById(int donationId) {
+    	DonationRecord donation = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, donationId);
+        if (donation != null) {
+            em.remove(donation);
+        }
+    }
+    
+    @Transactional
+    public void deleteBloodDonationById(int donationID) {
+    	
+    	BloodDonation donation = getById(BloodDonation.class, BloodDonation.FIND_BY_ID, donationID);
+        if (donation != null) {
+            em.refresh(donation);
+            
+            TypedQuery<DonationRecord> findDonationRecord = em
+                .createNamedQuery(DonationRecord.ID_RECORD_QUERY_NAME, DonationRecord.class)
+                .setParameter(PARAM1, donation.getId());
+            
+            	DonationRecord donationRecord = findDonationRecord.getSingleResult();
+                donationRecord.setDonation(null);
+                em.merge(donationRecord);
+                
+            em.remove(donation);
+        }
+    }
 }
