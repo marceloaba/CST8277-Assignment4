@@ -24,12 +24,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
  */
 @Entity
 @Table( name = "phone")
-@NamedQuery( name = "ALL_PHONES_QUERY_NAME", query = "SELECT * FROM Phone p")
-@NamedQuery(name ="PHONES_QUERY_BY_ID", query = "select distinct p from phone p where p.id =:param")
+@NamedQuery( name = "Phone.findAll", query = "SELECT p FROM Phone p")
+@NamedQuery( name = Phone.PHONES_QUERY_BY_ID, query = "SELECT p FROM Phone p left join fetch p.contacts where p.id=:param1")
 @AttributeOverride( name = "id", column = @Column( name = "phone_id"))
 public class Phone extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
-	public static final String ALL_PHONES_QUERY_NAME= "Phone.findAll";
 	public static final String PHONES_QUERY_BY_ID= "Phone.findByID";
 	
 	@Basic( optional = false)
