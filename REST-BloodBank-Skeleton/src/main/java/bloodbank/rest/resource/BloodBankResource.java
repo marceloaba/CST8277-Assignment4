@@ -43,6 +43,7 @@ public class BloodBankResource {
 	protected SecurityContext sc;
 
 	@GET
+    @RolesAllowed({ADMIN_ROLE})
 	public Response getBloodBanks() {
 		LOG.debug("Retrieving all blood banks...");
 		List<BloodBank> bloodBanks = service.getAllBloodBanks();
@@ -53,20 +54,22 @@ public class BloodBankResource {
 	}
 	
 	@GET
+	@RolesAllowed({ADMIN_ROLE, USER_ROLE})
 	@Path("/{bloodBankID}")
 	public Response getBloodBankById(@PathParam("bloodBankID") int bloodBankId) {
 		LOG.debug("Retrieving blood bank with id = {}", bloodBankId);
-		BloodBank bloodBank = service.getBloodBankById(bloodBankId);
-		Response response = Response.ok(bloodBank).build();
+		BloodBank bloodBank = service.getById(BloodBank.class, BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME, bloodBankId);
+		Response response = Response.status(bloodBank == null ? Status.NOT_FOUND : Status.OK).entity(bloodBank).build();
 		return response;
 	}
 	
 	@DELETE
+	@RolesAllowed({ADMIN_ROLE})
 	@Path("/{bloodBankID}")
-	public Response deleteBloodBank(@PathParam("bloodBankID") int bbID) {
-		LOG.debug("Deleting a specific blood bank with id = {}", bbID);
-		BloodBank bb = service.deleteBloodBank(bbID);
-		Response response = Response.ok(bb).build();
+	public Response deleteBloodBank(@PathParam("bloodBankID") int bloodBankId) {
+		LOG.debug("Deleting a specific blood bank with id = {}", bloodBankId);
+		BloodBank bloodBank = service.deleteBloodBank(bloodBankId);
+		Response response = Response.status(bloodBank == null ? Status.NOT_FOUND : Status.OK).entity(bloodBank).build();
 		return response;
 	}
 	
