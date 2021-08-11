@@ -53,6 +53,7 @@ import bloodbank.entity.BloodDonation;
 import bloodbank.entity.Contact;
 import bloodbank.entity.DonationRecord;
 import bloodbank.entity.Person;
+import bloodbank.entity.Phone;
 import bloodbank.entity.SecurityRole;
 import bloodbank.entity.SecurityUser;
 
@@ -344,5 +345,43 @@ public class BloodBankService implements Serializable {
                 em.merge(donationRecord);
             em.remove(donation);
         }
+    }
+    
+    @Transactional
+    public void deletePhoneById(int phoneID) {
+    	Phone phone = getById(Phone.class,"select ", phoneID);
+        if (phone != null) {
+            em.refresh(phone);
+            TypedQuery<Contact> findContact = em
+                .createNamedQuery(Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, Contact.class)
+                .setParameter(PARAM1, phone.getId());
+            Contact contact = findContact.getSingleResult();
+            contact.setPhone(null);
+            em.merge(contact);
+            em.remove(phone);
+        }
+    }
+    
+    @Transactional
+    public Phone persistPhone(Phone newPhone) {
+    	em.persist(newPhone);
+    	return newPhone;
+    }
+    
+    @Transactional
+    public void deleteContactById(int contactID) {
+    	Contact contact = getById(Contact.class, Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, contactID);
+        if (contact != null) {
+            contact.setPhone(null);
+            contact.setAddress(null);
+            em.merge(contact);
+            em.remove(contact);
+        }
+    }
+    
+    @Transactional
+    public Contact persistContact(Contact newContact) {
+    	em.persist(newContact);
+    	return newContact;
     }
 }
