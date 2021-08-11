@@ -53,7 +53,7 @@ public class PhoneResource {
 	@Path("/{phoneID}")
 	public Response getPhoneById(@PathParam("phoneID") int phoneId) {
 		LOG.debug("Retrieving phone with id = {}", phoneId);
-		Phone phone = service.getById(Phone.class, "Phone.findAll", phoneId);
+		Phone phone = service.getById(Phone.class, Phone.PHONES_QUERY_BY_ID, phoneId);
 		Response response = Response.ok(phone).build();
 		return response;
 	}
@@ -69,7 +69,7 @@ public class PhoneResource {
 	@DELETE
 	@RolesAllowed({ADMIN_ROLE})
 	@Path("/{phoneID}")
-	public Response deleteAddress(@PathParam("phoneID") int phoneID) {
+	public Response deletePhone(@PathParam("phoneID") int phoneID) {
 		LOG.debug("Deleting a specific phone with id = {}", phoneID);
 		Phone phone = service.getById(Phone.class, Phone.PHONES_QUERY_BY_ID, phoneID);
 		service.deletePhoneById(phoneID);

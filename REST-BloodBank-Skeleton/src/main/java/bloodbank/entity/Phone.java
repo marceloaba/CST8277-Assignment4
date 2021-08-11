@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table( name = "phone")
 @NamedQuery( name = "Phone.findAll", query = "SELECT p FROM Phone p")
-@NamedQuery( name = Phone.PHONES_QUERY_BY_ID, query = "SELECT p FROM Phone p left join fetch p.contacts where p.id=:param1")
+@NamedQuery( name = Phone.PHONES_QUERY_BY_ID, query = "SELECT p FROM Phone p where p.id=:param1")
 @AttributeOverride( name = "id", column = @Column( name = "phone_id"))
 public class Phone extends PojoBase implements Serializable {
 	private static final long serialVersionUID = 1L;
