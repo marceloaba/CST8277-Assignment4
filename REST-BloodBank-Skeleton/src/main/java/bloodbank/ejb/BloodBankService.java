@@ -332,16 +332,14 @@ public class BloodBankService implements Serializable {
     @Transactional
     public void deleteBloodDonationById(int donationID) {
     	
-    	BloodDonation donation = getById(BloodDonation.class, BloodDonation.FIND_BY_ID, donationID);
+    	//DonationRecord record = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, donationID);
+    	BloodDonation donation= getById(BloodDonation.class, BloodDonation.FIND_BY_ID, donationID);
         if (donation != null) {
-            
-            TypedQuery<DonationRecord> findDonationRecord = em
-                .createNamedQuery(DonationRecord.ID_RECORD_QUERY_NAME, DonationRecord.class)
-                .setParameter(PARAM1, donation.getId());
-            
-            	DonationRecord donationRecord = findDonationRecord.getSingleResult();
-                donationRecord.setDonation(null);
-                em.merge(donationRecord);
+        	
+        	if(donation.getRecord()!=null)
+                donation.getRecord().setDonation(null);
+                
+                
             em.remove(donation);
         }
     }
