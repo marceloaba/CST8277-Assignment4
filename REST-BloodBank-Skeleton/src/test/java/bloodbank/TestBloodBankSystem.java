@@ -274,7 +274,7 @@ public class TestBloodBankSystem {
             .get();
         assertThat(response.getStatus(), is(200));
         DonationRecord donationRecord = response.readEntity(new GenericType<DonationRecord>(){});
-        assertEquals("1", donationRecord.getTested());
+        assertEquals(1, donationRecord.getTested());
       
     }
     
