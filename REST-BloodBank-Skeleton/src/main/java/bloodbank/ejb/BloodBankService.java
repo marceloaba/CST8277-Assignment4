@@ -308,7 +308,7 @@ public class BloodBankService implements Serializable {
     }
     
     @Transactional
-    public void deleteAddressById(int addressID) {
+    public Address deleteAddressById(int addressID) {
     	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
         if (address != null) {
             em.refresh(address);
@@ -320,7 +320,47 @@ public class BloodBankService implements Serializable {
             em.merge(contact);
             em.remove(address);
         }
+        return address;
     }
+    //public BloodBank deleteBloodBank(int id) {
+//    @Transactional
+//    public Address deleteAddressById2(int addressID) {
+//    	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
+//    	
+//    	//Set<BloodDonation> donations = bb.getDonations();    	
+//    	Set<Contact> contacts = address.getContacts();
+//    	
+//    	//List<BloodDonation> list = new LinkedList<>();
+//    	List<Contact> list = new LinkedList<>();
+//    	contacts.forEach(list::add);
+//    	
+////    	list.forEach(bd -> {
+////    		if (bd.getRecord() != null) {
+////    			DonationRecord dr = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, bd.getRecord().getId());
+////    			dr.setDonation(null);
+////    		}
+////    		bd.setRecord(null);
+////    		em.merge(bd);
+////    	});
+////    	
+////    	em.remove(bb);
+////    	return bb;
+//    	list.forEach(contact -> {
+//    		if (contact.getAddress() != null) {
+//    			Contact contact = service.getById(Contact.class, Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, contactID);
+//    			dr.setDonation(null);
+//    		}
+//    		bd.setRecord(null);
+//    		em.merge(bd);
+//    	});
+//    	
+//    	em.remove(bb);
+//    	return bb;
+//
+//    }
+    
+    
+    
     
     @Transactional
     public void deleteDonationRecordById(int donationId) {
