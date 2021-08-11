@@ -31,7 +31,6 @@ import static bloodbank.utility.MyConstants.USER_ROLE;
 
 import java.io.Serializable;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +39,7 @@ import java.util.Set;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -56,6 +56,8 @@ import bloodbank.entity.Person;
 import bloodbank.entity.Phone;
 import bloodbank.entity.SecurityRole;
 import bloodbank.entity.SecurityUser;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 /**
@@ -65,7 +67,7 @@ import bloodbank.entity.SecurityUser;
 public class BloodBankService implements Serializable {
     private static final long serialVersionUID = 1L;
     
-//    private static final Logger LOG = LogManager.getLogger();
+    private static final Logger LOG = LogManager.getLogger();
     
     @PersistenceContext(name = PU_NAME)
     protected EntityManager em;
@@ -202,7 +204,14 @@ public class BloodBankService implements Serializable {
     public <T> T getById(Class<T> entity, String namedQuery, int id) {
     	TypedQuery<T> allQuery = em.createNamedQuery(namedQuery, entity);
     	allQuery.setParameter(PARAM1, id);
-    	return allQuery.getSingleResult();
+    	T result = null;
+    	try{
+    		result = allQuery.getSingleResult();
+    	}
+    	catch(NoResultException ex) {
+    		
+    	}
+    	return result;
     }
     
     @Transactional
@@ -310,57 +319,30 @@ public class BloodBankService implements Serializable {
     @Transactional
     public Address deleteAddressById(int addressID) {
     	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
+    	Contact contact = null;
+//    	em.refresh(address);
         if (address != null) {
             em.refresh(address);
             TypedQuery<Contact> findContact = em
                 .createNamedQuery(Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, Contact.class)
                 .setParameter(PARAM1, address.getId());
-            Contact contact = findContact.getSingleResult();
-            contact.setAddress(null);
-            em.merge(contact);
+            try {
+            	contact = findContact.getSingleResult();
+            }
+            catch(NoResultException ex) {
+            	
+            }
+            LOG.debug("Contact found = {}", contact);
+            if (contact != null) {
+            	contact.setAddress(null);
+                em.merge(contact);
+            }
             em.remove(address);
+            LOG.debug("Address deleted = {}", address);
+            
         }
         return address;
-    }
-    //public BloodBank deleteBloodBank(int id) {
-//    @Transactional
-//    public Address deleteAddressById2(int addressID) {
-//    	Address address = getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
-//    	
-//    	//Set<BloodDonation> donations = bb.getDonations();    	
-//    	Set<Contact> contacts = address.getContacts();
-//    	
-//    	//List<BloodDonation> list = new LinkedList<>();
-//    	List<Contact> list = new LinkedList<>();
-//    	contacts.forEach(list::add);
-//    	
-////    	list.forEach(bd -> {
-////    		if (bd.getRecord() != null) {
-////    			DonationRecord dr = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, bd.getRecord().getId());
-////    			dr.setDonation(null);
-////    		}
-////    		bd.setRecord(null);
-////    		em.merge(bd);
-////    	});
-////    	
-////    	em.remove(bb);
-////    	return bb;
-//    	list.forEach(contact -> {
-//    		if (contact.getAddress() != null) {
-//    			Contact contact = service.getById(Contact.class, Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, contactID);
-//    			dr.setDonation(null);
-//    		}
-//    		bd.setRecord(null);
-//    		em.merge(bd);
-//    	});
-//    	
-//    	em.remove(bb);
-//    	return bb;
-//
-//    }
-    
-    
-    
+    }    
     
     @Transactional
     public void deleteDonationRecordById(int donationId) {

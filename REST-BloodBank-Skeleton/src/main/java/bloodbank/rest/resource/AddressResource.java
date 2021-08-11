@@ -18,6 +18,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -54,7 +55,7 @@ public class AddressResource {
 	public Response getAddressById(@PathParam("addressID") int addressId) {
 		LOG.debug("Retrieving addresse with id = {}", addressId);
 		Address address = service.getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressId);
-		Response response = Response.ok(address).build();
+		Response response = Response.status(address == null ? Status.NOT_FOUND : Status.OK).entity(address).build();
 		return response;
 	}
 	
@@ -71,9 +72,8 @@ public class AddressResource {
 	@Path("/{addressID}")
 	public Response deleteAddress(@PathParam("addressID") int addressID) {
 		LOG.debug("Deleting a specific address with id = {}", addressID);
-//		Address address = service.getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
 		Address address = service.deleteAddressById(addressID);
-		Response response = Response.ok(address).build();
+		Response response = Response.status(address == null ? Status.NOT_FOUND : Status.OK).entity(address).build();
 		return response;
 	}
 	
