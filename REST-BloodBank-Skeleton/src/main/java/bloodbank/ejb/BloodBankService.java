@@ -216,27 +216,30 @@ public class BloodBankService implements Serializable {
     
     @Transactional
     public BloodBank deleteBloodBank(int id) {
-    	BloodBank bb = getBloodBankById(id);
-    	// BloodBank bb = getById(BloodBank.class, BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME, id);
+//    	BloodBank bb = getBloodBankById(id);
+    	 BloodBank bb = getById(BloodBank.class, BloodBank.SPECIFIC_BLOODBANKS_QUERY_NAME, id);
     	
-    	Set<BloodDonation> donations = bb.getDonations();
+    	if (bb != null) {
+    		Set<BloodDonation> donations = bb.getDonations();
+        	
+        	// You can either delete using a new named query and delete all blood donations with the specified blood bank id (id)
+        	// Or you can loop through the list and manually remove them as I am doing below
+        	
+        	List<BloodDonation> list = new LinkedList<>();
+        	donations.forEach(list::add);
+        	
+        	list.forEach(bd -> {
+        		if (bd.getRecord() != null) {
+        			DonationRecord dr = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, bd.getRecord().getId());
+        			dr.setDonation(null);
+        		}
+        		bd.setRecord(null);
+        		em.merge(bd);
+        	});
+        	
+        	em.remove(bb);
+    	}
     	
-    	// You can either delete using a new named query and delete all blood donations with the specified blood bank id (id)
-    	// Or you can loop through the list and manually remove them as I am doing below
-    	
-    	List<BloodDonation> list = new LinkedList<>();
-    	donations.forEach(list::add);
-    	
-    	list.forEach(bd -> {
-    		if (bd.getRecord() != null) {
-    			DonationRecord dr = getById(DonationRecord.class, DonationRecord.ID_RECORD_QUERY_NAME, bd.getRecord().getId());
-    			dr.setDonation(null);
-    		}
-    		bd.setRecord(null);
-    		em.merge(bd);
-    	});
-    	
-    	em.remove(bb);
     	return bb;
 
     }
