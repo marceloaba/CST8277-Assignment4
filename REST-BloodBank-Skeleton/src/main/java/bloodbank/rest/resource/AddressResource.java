@@ -71,8 +71,8 @@ public class AddressResource {
 	@Path("/{addressID}")
 	public Response deleteAddress(@PathParam("addressID") int addressID) {
 		LOG.debug("Deleting a specific address with id = {}", addressID);
-		Address address = service.getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
-		service.deleteAddressById(addressID);
+//		Address address = service.getById(Address.class, Address.SPECIFIC_ADDRESSES_QUERY_NAME, addressID);
+		Address address = service.deleteAddressById(addressID);
 		Response response = Response.ok(address).build();
 		return response;
 	}
