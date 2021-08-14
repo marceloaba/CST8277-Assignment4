@@ -33,6 +33,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,11 +87,9 @@ public class PhoneResource {
 	@Path("/{phoneID}")
 	public Response deletePhone(@PathParam("phoneID") int phoneID) {
 		LOG.debug("Deleting a specific phone with id = {}", phoneID);
-		Phone phone = service.getById(Phone.class, Phone.PHONES_QUERY_BY_ID, phoneID);
-		service.deletePhoneById(phoneID);
-		Response response = Response.ok(phone).build();
+		Phone phone = service.deletePhoneById(phoneID);
+		Response response = Response.status(phone == null ? Status.NOT_FOUND : Status.OK).entity(phone).build();
 		return response;
 	}
-	
 }
 
