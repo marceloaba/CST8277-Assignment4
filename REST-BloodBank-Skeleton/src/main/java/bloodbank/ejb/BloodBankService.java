@@ -376,7 +376,7 @@ public class BloodBankService implements Serializable {
     }
     
     @Transactional
-    public void deletePhoneById(int phoneID) {
+    public void deletePhoneById2(int phoneID) {
     	Phone phone = getById(Phone.class,"select ", phoneID);
         if (phone != null) {
             em.refresh(phone);
@@ -390,6 +390,32 @@ public class BloodBankService implements Serializable {
         }
     }
     
+    @Transactional
+    public Phone deletePhoneById(int phoneID) {
+    	Phone phone = getById(Phone.class, Phone.PHONES_QUERY_BY_ID, phoneID);
+    	Contact contact = null;
+        if (phone != null) {
+            em.refresh(phone);
+            TypedQuery<Contact> findContact = em
+                .createNamedQuery(Contact.ADDRESS_FOR_OWNING_PERSON_CONTACT, Contact.class)
+                .setParameter(PARAM1, phone.getId());
+            try {
+            	contact = findContact.getSingleResult();
+            }
+            catch(NoResultException ex) {
+            	
+            }
+            LOG.debug("Contact found = {}", contact);
+            if (contact != null) {
+            	contact.setPhone(null);
+            	em.merge(contact);
+            }
+            em.remove(phone);
+            LOG.debug("Phone deleted = {}", phone);
+        }
+        return phone;
+    }
+     
     @Transactional
     public Phone persistPhone(Phone newPhone) {
     	em.persist(newPhone);
