@@ -4,6 +4,14 @@
  * 
  * @author Teddy Yap
  * @author Mike Norman
+ * 
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
  */
 package bloodbank.security;
 

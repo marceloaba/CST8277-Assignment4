@@ -1,13 +1,19 @@
-/**
- * File: SecurityRole.java
- * Course materials (21S) CST 8277
- *
- * @author Teddy Yap
- * @author Shariar (Shawn) Emami
- * @author (original) Mike Norman
+/***************************************************************************
+ * File: SecurityRole.java Course materials (21F) CST 8277
  * 
- * Updated by:  I. Am. A. Student 040nnnnnnn
- *
+ * @author Shariar (Shawn) Emami
+ * @date Mar 9, 2021
+ * 
+ * @author (Original) Mike Norman
+ * @date 2020 04
+ * 
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
  */
 package bloodbank.entity;
 

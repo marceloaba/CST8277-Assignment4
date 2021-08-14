@@ -1,3 +1,19 @@
+/**
+ * File: Phone.java
+ * Course materials (21S) CST 8277
+ *
+ * @author Teddy Yap
+ * @author Shariar (Shawn) Emami
+ * @author (original) Mike Norman
+ * 
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
+ */
 package bloodbank.entity;
 
 import java.io.Serializable;

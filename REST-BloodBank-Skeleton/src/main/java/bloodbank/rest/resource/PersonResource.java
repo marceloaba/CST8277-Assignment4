@@ -5,8 +5,13 @@
  * @author Shariar (Shawn) Emami
  * @author (original) Mike Norman
  * 
- * Update by:  I. Am. Parnoor Singh Gill Student 040996907
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
  * 
+ * @date 13/08/2021
  */
 package bloodbank.rest.resource;
 

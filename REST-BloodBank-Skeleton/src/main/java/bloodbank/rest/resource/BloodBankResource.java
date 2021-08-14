@@ -1,3 +1,14 @@
+/***************************************************************************
+ * File: BloodBankResource.java Course materials (21F) CST 8277
+ * 
+ * Created by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
+ */
 package bloodbank.rest.resource;
 
 import static bloodbank.utility.MyConstants.ADMIN_ROLE;

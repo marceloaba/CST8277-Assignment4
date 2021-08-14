@@ -7,6 +7,13 @@
  * 
  * Note:  Students do NOT need to change anything in this class.
  *
+ * Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
  */
 package bloodbank.rest.resource;
 

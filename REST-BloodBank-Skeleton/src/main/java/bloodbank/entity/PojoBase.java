@@ -6,7 +6,16 @@
  * 
  * @author Mike Norman
  * @date 2020 04
+ * 
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * @date 13/08/2021
  */
+ 
 package bloodbank.entity;
 
 import java.io.Serializable;

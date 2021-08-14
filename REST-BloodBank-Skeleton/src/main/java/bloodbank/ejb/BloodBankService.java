@@ -6,8 +6,13 @@
  * @author Shariar (Shawn) Emami
  * @author (original) Mike Norman
  * 
- * Updated by:  I. Am. A. Student 040nnnnnnn
- *
+ * Updated by Students:
+ * 	@author Chrishanthi Michael
+ * 	@author Marcelo Monteiro da Silva
+ * 	@author Janio Mendonca Junior
+ * 	@author Parnoor Singh Gill
+ * 
+ * Creation date: 13/08/2021
  */
 package bloodbank.ejb;
 
